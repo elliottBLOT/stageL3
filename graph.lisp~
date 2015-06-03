@@ -66,4 +66,4 @@
 (defparameter *pn* '(= j (1+ i)))
 (defparameter *kn* t)
 (defparameter *empty* nil)
-(defparameter *test1* '(and (/= i j) (or (= i (+ 1 j)) (= i (* 2 j))))) 
+
