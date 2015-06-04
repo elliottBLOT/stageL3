@@ -74,7 +74,6 @@
   (make-graph (make-edges-unoriented nb-nodes expressions) 
 	      (make-nodes nb-nodes)))
 
-
 (defparameter *cycle* '(or (and (= i 1) (= j n)) (= j (1+ i))))
 (defparameter *pn* '(= j (1+ i)))
 (defparameter *kn* t)
