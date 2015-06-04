@@ -47,23 +47,37 @@
 		     (lambda (arg) (eval-arithmetic-expression nb-nodes i j arg))
 		     arguments)))))))
 
-  (defun make-edges-unoriented (nb-nodes expression)
-    (loop
-       for i from 1 below nb-nodes
-       nconc (loop for j from (1+ i) to nb-nodes
-		unless (= i j)
-		when (eval-logical-expression nb-nodes i j expression)
-		collect (list i j))))
+(defun make-edges-unoriented (nb-nodes expression)
+  (loop
+     for i from 1 below nb-nodes
+     nconc (loop for j from (1+ i) to nb-nodes
+	      unless (= i j)
+	      when (eval-logical-expression nb-nodes i j expression)
+	      collect (list i j))))
 
-  (defun make-nodes (nb-nodes)
-    (iota nb-nodes 1))
+(defun make-edges-oriented (nb-nodes expression)
+  (loop
+     for i from 1 to nb-nodes
+     nconc (loop for j from 1 to nb-nodes
+	      unless (= i j)
+	      when (eval-logical-expression nb-nodes i j expression)
+	      collect (list i j))))
 
-  (defun to-graph (nb-nodes expressions)
-    (make-graph (make-edges-unoriented nb-nodes expressions) 
-		(make-nodes nb-nodes)))
+(defun to-graph-oriented (nb-nodes expressions)
+  (make-graph (make-edges-oriented nb-nodes expressions)
+	      (make-nodes nb-nodes)))
+
+(defun make-nodes (nb-nodes)
+  (iota nb-nodes 1))
+
+(defun to-graph-unoriented (nb-nodes expressions)
+  (make-graph (make-edges-unoriented nb-nodes expressions) 
+	      (make-nodes nb-nodes)))
 
 (defparameter *cycle* '(or (and (= i 1) (= j n)) (= j (1+ i))))
 (defparameter *pn* '(= j (1+ i)))
 (defparameter *kn* t)
 (defparameter *empty* nil)
-(defparameter *test1* '(and (/= i j) (or (= i (+ 1 j)) (= i (* 2 j))))) 
+(defparameter *test1* '(or (= i (+ 1 j)) (= i (* 2 j))))
+(defparameter *test2* '(or (= j (+ 1 i)) (= j (* 2 i))))
+(defparameter *test3* '(or (= i (- j 1)) (= j (* 2 i))))
