@@ -28,6 +28,7 @@
   (when (symbolp exp)
     (setf exp (eval exp)))
   `(loop
+      with n = ,nb-nodes
       for i from 1 to ,nb-nodes
       nconc (loop for j from 1 to ,nb-nodes
 	       unless (= i j)
