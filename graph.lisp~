@@ -48,12 +48,16 @@
 		     arguments)))))))
 
 (defun make-edges-unoriented (nb-nodes expression)
-  (loop
-     for i from 1 below nb-nodes
-     nconc (loop for j from (1+ i) to nb-nodes
-	      unless (= i j)
-	      when (eval-logical-expression nb-nodes i j expression)
-	      collect (list i j))))
+  (delete-double (sort-edges (make-edges-oriented nb-nodes expression))))
+
+(defun sort-edges (list-edges)
+  (mapcar #'(lambda (x)
+	      (if (< (car x) (car (cdr x)))
+		  (cons (car x) (cdr x))
+		  (list (car (cdr x)) (car x) )))list-edges))
+
+(defun delete-double (list-edges)
+  (remove-duplicates list-edges :test #'equal))
 
 (defun make-edges-oriented (nb-nodes expression)
   (loop
@@ -82,3 +86,4 @@
 (defparameter *test1* '(or (= i (+ 1 j)) (= i (* 2 j))))
 (defparameter *test2* '(or (= j (+ 1 i)) (= j (* 2 i))))
 (defparameter *test3* '(or (= i (- j 1)) (= j (* 2 i))))
+(defparameter *not* '(not (or (= i (+ 1 j)) (= i (* 2 j)))))
