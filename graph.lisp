@@ -36,34 +36,23 @@
 	       collect (list i j))))
 
 (defmacro make-edges-unoriented (nb-nodes expression)
-  `(sort-edges (delete-double (sort-nodes (make-edges-oriented ,nb-nodes ,expression)))))
+  `(sort (delete-double (sort-nodes (make-edges-oriented ,nb-nodes ,expression))) #'test))
 
 (defmacro to-graph-oriented (nb-nodes expressions)
   `(make-graph (make-edges-oriented ,nb-nodes ,expressions)
-	      (make-nodes ,nb-nodes)))
-
-(defun sort-edges (list-edges)
-  (loop for i from (- (length list-edges) 2) downto 0
-     do (loop for j from 0 to i
-	   for l on list-edges
-	   do (when (test (second l) (first l))
-		(print (second l))
-		(rotatef (second l) (first l)))))
-  list-edges)
+	       (make-nodes ,nb-nodes)))
 
 (defun test (list1 list2)
   (if (< (first list1) (first list2))
       t
-      (if (and (= (first list1) (first list2)) (< (second list1) (second list2)))
-	  t
-	  nil)))
+      (and (= (first list1) (first list2)) (< (second list1) (second list2)))))
 
 (defun make-nodes (nb-nodes)
   (iota nb-nodes 1))
 
 (defmacro to-graph-unoriented (nb-nodes expressions)
   `(make-graph (make-edges-unoriented ,nb-nodes ,expressions) 
-	      (make-nodes ,nb-nodes)))
+	       (make-nodes ,nb-nodes)))
 
 
 (defparameter *cycle* '(or (and (= i 1) (= j n)) (= j (1+ i))))

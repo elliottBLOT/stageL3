@@ -15,11 +15,11 @@
      for i from start by step
      collect i))
 
-(defun sort-edges (list-edges)
+(defun sort-nodes (list-edges)
   (mapcar #'(lambda (x)
-	      (if (< (car x) (car (cdr x)))
+	      (if (< (car x) (cadr x))
 		  (cons (car x) (cdr x))
-		  (list (car (cdr x)) (car x) )))list-edges))
+		  (list (cadr x) (car x) )))list-edges))
 
 (defun delete-double (list-edges)
   (remove-duplicates list-edges :test #'equal))
@@ -36,11 +36,27 @@
 	       collect (list i j))))
 
 (defmacro make-edges-unoriented (nb-nodes expression)
-  `(delete-double (sort-edges (make-edges-oriented ,nb-nodes ,expression))))
+  `(sort-edges (delete-double (sort-nodes (make-edges-oriented ,nb-nodes ,expression)))))
 
 (defmacro to-graph-oriented (nb-nodes expressions)
   `(make-graph (make-edges-oriented ,nb-nodes ,expressions)
 	      (make-nodes ,nb-nodes)))
+
+(defun sort-edges (list-edges)
+  (loop for i from (- (length list-edges) 2) downto 0
+     do (loop for j from 0 to i
+	   for l on list-edges
+	   do (when (test (second l) (first l))
+		(print (second l))
+		(rotatef (second l) (first l)))))
+  list-edges)
+
+(defun test (list1 list2)
+  (if (< (first list1) (first list2))
+      t
+      (if (and (= (first list1) (first list2)) (< (second list1) (second list2)))
+	  t
+	  nil)))
 
 (defun make-nodes (nb-nodes)
   (iota nb-nodes 1))
