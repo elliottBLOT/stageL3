@@ -36,13 +36,13 @@
 	       collect (list i j))))
 
 (defmacro make-edges-unoriented (nb-nodes expression)
-  `(sort (delete-double (sort-nodes (make-edges-oriented ,nb-nodes ,expression))) #'test))
+  `(sort (delete-double (sort-nodes (make-edges-oriented ,nb-nodes ,expression))) #'doublon))
 
 (defmacro to-graph-oriented (nb-nodes expressions)
   `(make-graph (make-edges-oriented ,nb-nodes ,expressions)
 	       (make-nodes ,nb-nodes)))
 
-(defun test (list1 list2)
+(defun doublon (list1 list2)
   (if (< (first list1) (first list2))
       t
       (and (= (first list1) (first list2)) (< (second list1) (second list2)))))
@@ -54,6 +54,29 @@
   `(make-graph (make-edges-unoriented ,nb-nodes ,expressions) 
 	       (make-nodes ,nb-nodes)))
 
+(defmacro main (expression test n x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
+  `(if ,test
+       (to-graph-unoriented ,n (translate ,expression ,x0 ,x1 ,x2 ,x3 ,x4 ,x5 ,x6 ,x7 ,x8 ,x9))
+       (print "error")))
+
+(defun translate (expression x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
+  (nsubst x0 'x0 expression)
+  (nsubst x1 'x1 expression)
+  (nsubst x2 'x2 expression)
+  (nsubst x3 'x3 expression)
+  (nsubst x4 'x4 expression)
+  (nsubst x5 'x5 expression)
+  (nsubst x6 'x6 expression)
+  (nsubst x7 'x7 expression)
+  (nsubst x8 'x8 expression)
+  (nsubst x9 'x9 expression)
+  )
+
+(defun create (exp n x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
+  (translate exp x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
+  (to-graph-unoriented n exp)
+  )
+
 
 (defparameter *cycle* '(or (and (= i 1) (= j n)) (= j (1+ i))))
 (defparameter *pn* '(= j (1+ i)))
@@ -63,3 +86,10 @@
 (defparameter *test2* '(or (= j (+ 1 i)) (= j (* 2 i))))
 (defparameter *test3* '(or (= i (- j 1)) (= j (* 2 i))))
 (defparameter *not* '(not (or (= i (+ 1 j)) (= i (* 2 j)))))
+(defparameter *g*      '(or (= (+ 3  j) i) (and (= i (1+ j)) (/= (rem j 3 ) 0))))
+(defparameter *grille* '(or (= (+ x0 j) i) (and (= i (1+ j)) (/= (rem j x0) 0)))) 
+
+(defparameter *test-grille* '(= 0 (rem n x0)))
+
+(defparameter *testra* '( x0 x1 x2 x3 x4 x5 x6 x8 x7 x9 x5 x4))
+
