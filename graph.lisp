@@ -55,9 +55,20 @@
 	       (make-nodes ,nb-nodes)))
 
 (defmacro main (expression test n x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
-  `(if ,test
-       (to-graph-unoriented ,n (translate ,expression ,x0 ,x1 ,x2 ,x3 ,x4 ,x5 ,x6 ,x7 ,x8 ,x9))
-       (print "error")))
+  `(progn (setf n ,n)
+	  (setf x0 ,x0)
+	  (setf x1 ,x1)
+	  (setf x2 ,x2)
+	  (setf x3 ,x3)
+	  (setf x4 ,x4)
+	  (setf x5 ,x5)
+	  (setf x6 ,x6)
+	  (setf x7 ,x7)
+	  (setf x8 ,x8)
+	  (setf x9 ,x9)
+	  (if (eval ,test)
+	      (create ,expression ,n ,x0 ,x1 ,x2 ,x3 ,x4 ,x5 ,x6 ,x7 ,x8 ,x9)
+	      (print 'error))))
 
 (defun translate (expression x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
   (nsubst x0 'x0 expression)
@@ -72,11 +83,9 @@
   (nsubst x9 'x9 expression)
   )
 
-(defun create (exp n x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
-  (translate exp x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
-  (to-graph-unoriented n exp)
-  )
-
+(defmacro create (exp n x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
+  `(progn(translate ,exp ,x0 ,x1 ,x2 ,x3 ,x4 ,x5 ,x6 ,x7 ,x8 ,x9)
+	 (to-graph-unoriented ,n ,exp)))
 
 (defparameter *cycle* '(or (and (= i 1) (= j n)) (= j (1+ i))))
 (defparameter *pn* '(= j (1+ i)))
@@ -91,5 +100,5 @@
 
 (defparameter *test-grille* '(= 0 (rem n x0)))
 
-(defparameter *testra* '( x0 x1 x2 x3 x4 x5 x6 x8 x7 x9 x5 x4))
+(defparameter *testranslate* '( x0 x1 x2 x3 x4 x5 x6 x8 x7 x9 x5 x4))
 
