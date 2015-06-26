@@ -36,35 +36,56 @@
 	       collect (list i j))))
 
 (defmacro make-edges-unoriented (nb-nodes expression)
-  `(sort-edges (delete-double (sort-nodes (make-edges-oriented ,nb-nodes ,expression)))))
+  `(sort (delete-double (sort-nodes (make-edges-oriented ,nb-nodes ,expression))) #'doublon))
 
 (defmacro to-graph-oriented (nb-nodes expressions)
   `(make-graph (make-edges-oriented ,nb-nodes ,expressions)
-	      (make-nodes ,nb-nodes)))
+	       (make-nodes ,nb-nodes)))
 
-(defun sort-edges (list-edges)
-  (loop for i from (- (length list-edges) 2) downto 0
-     do (loop for j from 0 to i
-	   for l on list-edges
-	   do (when (test (second l) (first l))
-		(print (second l))
-		(rotatef (second l) (first l)))))
-  list-edges)
-
-(defun test (list1 list2)
+(defun doublon (list1 list2)
   (if (< (first list1) (first list2))
       t
-      (if (and (= (first list1) (first list2)) (< (second list1) (second list2)))
-	  t
-	  nil)))
+      (and (= (first list1) (first list2)) (< (second list1) (second list2)))))
 
 (defun make-nodes (nb-nodes)
   (iota nb-nodes 1))
 
 (defmacro to-graph-unoriented (nb-nodes expressions)
   `(make-graph (make-edges-unoriented ,nb-nodes ,expressions) 
-	      (make-nodes ,nb-nodes)))
+	       (make-nodes ,nb-nodes)))
 
+(defmacro main (expression test n x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
+  `(progn (setf n ,n)
+	  (setf x0 ,x0)
+	  (setf x1 ,x1)
+	  (setf x2 ,x2)
+	  (setf x3 ,x3)
+	  (setf x4 ,x4)
+	  (setf x5 ,x5)
+	  (setf x6 ,x6)
+	  (setf x7 ,x7)
+	  (setf x8 ,x8)
+	  (setf x9 ,x9)
+	  (if (eval ,test)
+	      (create ,expression ,n ,x0 ,x1 ,x2 ,x3 ,x4 ,x5 ,x6 ,x7 ,x8 ,x9)
+	      (print 'error))))
+
+(defun translate (expression x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
+  (nsubst x0 'x0 expression)
+  (nsubst x1 'x1 expression)
+  (nsubst x2 'x2 expression)
+  (nsubst x3 'x3 expression)
+  (nsubst x4 'x4 expression)
+  (nsubst x5 'x5 expression)
+  (nsubst x6 'x6 expression)
+  (nsubst x7 'x7 expression)
+  (nsubst x8 'x8 expression)
+  (nsubst x9 'x9 expression)
+  )
+
+(defmacro create (exp n x0 x1 x2 x3 x4 x5 x6 x7 x8 x9)
+  `(progn(translate ,exp ,x0 ,x1 ,x2 ,x3 ,x4 ,x5 ,x6 ,x7 ,x8 ,x9)
+	 (to-graph-unoriented ,n ,exp)))
 
 (defparameter *cycle* '(or (and (= i 1) (= j n)) (= j (1+ i))))
 (defparameter *pn* '(= j (1+ i)))
@@ -74,3 +95,10 @@
 (defparameter *test2* '(or (= j (+ 1 i)) (= j (* 2 i))))
 (defparameter *test3* '(or (= i (- j 1)) (= j (* 2 i))))
 (defparameter *not* '(not (or (= i (+ 1 j)) (= i (* 2 j)))))
+(defparameter *g*      '(or (= (+ 3  j) i) (and (= i (1+ j)) (/= (rem j 3 ) 0))))
+(defparameter *grille* '(or (= (+ x0 j) i) (and (= i (1+ j)) (/= (rem j x0) 0)))) 
+
+(defparameter *test-grille* '(= 0 (rem n x0)))
+
+(defparameter *testranslate* '( x0 x1 x2 x3 x4 x5 x6 x8 x7 x9 x5 x4))
+
