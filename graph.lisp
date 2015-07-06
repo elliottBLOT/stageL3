@@ -94,8 +94,12 @@
   '(or (= (+ 3 j) i) (and (= i (1+ j)) (/= (rem j 3 ) 0))))
 (defparameter *grille* 
   '(or (= (+ :x0 j) i) (and (= i (1+ j)) (/= (rem j :x0) 0)))) 
+(defparameter *gee*
+  '(or (and (or (= j (+ (- n :x0 ) i)) (= i (+ :x0 j))) (= (mod (- j :x2) :x1) 0)) (and (= i (+ j :x4)) (= (mod (1- i) :x3) 0))(or (and (= i 1) (= j n)) (= j (1+ i)))))
+
 
 (defparameter *test-grille* '(= 0 (rem n :x0)))
 
 ;; Example
 ;; (main 15 *grille* *test-grille* :x0 3) => [15 nodes 22 edges]
+
